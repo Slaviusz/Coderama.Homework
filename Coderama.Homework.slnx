@@ -1,3 +1,13 @@
 <Solution>
-  <Project Path="Coderama.Homework.csproj" />
+  <Folder Name="/Solution Items/">
+    <File Path="ANALYSIS.md" />
+    <File Path="Coderama.Homework.http" />
+    <File Path="README.md" />
+    <File Path=".gitignore" />
+    <File Path="Coderama.Api/appsettings.json" />
+    <File Path="Coderama.Api/appsettings.Development.json" />
+    <File Path="Coderama.Api/Properties/launchSettings.json" />
+  </Folder>
+  <Project Path="Coderama.Abstractions/Coderama.Abstractions.csproj" />
+  <Project Path="Coderama.Api/Coderama.Api.csproj" />
 </Solution>

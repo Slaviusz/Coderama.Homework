@@ -1,9 +1,0 @@
-global using Coderama.Homework.Abstractions;
-global using Coderama.Homework.Contracts.Requests;
-global using Coderama.Homework.Contracts.Responses;
-global using Coderama.Homework.Models;
-global using FluentValidation;
-global using Microsoft.AspNetCore.Mvc;
-global using OneOf;
-global using OneOf.Types;
-global using System.Text.Json;
