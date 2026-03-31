@@ -1,6 +1,9 @@
 namespace Coderama.Homework.Implementations.DocumentStorage;
 
-public class FileStorage : IDocumentStorage {
+internal class FileStorage : IDocumentStorage {
+
+    private static readonly string[] AttrNames = ["name", "path", "creator"];
+    private static readonly char[] Charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".ToCharArray();
 
     public async Task<OneOf<Success<InternalDocument>, NotFound>> GetDocumentByIdAsync(string internalId, CancellationToken cancellationToken)
     {
@@ -8,7 +11,12 @@ public class FileStorage : IDocumentStorage {
         var document = new InternalDocument(
             Guid.NewGuid().ToString("D"),
             [],
-            JsonDocument.Parse("{}")
+            JsonDocument.Parse($$"""
+                               {
+                                 "{{AttrNames[Random.Shared.Next(AttrNames.Length)]}}": "{{new(Random.Shared.GetItems(Charset, 8))}}",
+                                 "{{AttrNames[Random.Shared.Next(AttrNames.Length)]}}": "{{new(Random.Shared.GetItems(Charset, 8))}}"
+                               }
+                               """)
         );
         return new Success<InternalDocument>(document);
     }
