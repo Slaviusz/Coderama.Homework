@@ -5,16 +5,17 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <InvariantGlobalization>true</InvariantGlobalization>
-        <PublishAot>true</PublishAot>
+        <PublishAot>false</PublishAot>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="FluentValidation" Version="12.1.1" />
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5"/>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Endpoints\" />
+        <PackageReference Include="OneOf" Version="3.0.271" />
+        <PackageReference Include="Riok.Mapperly" Version="4.3.1" />
+        <PackageReference Include="Scalar.AspNetCore" Version="2.13.17" />
     </ItemGroup>
 
 </Project>
