@@ -14,7 +14,7 @@ public class IntegrationDocumentGetTests : IClassFixture<WebApplicationFactory<P
     }
 
     [Fact]
-    public async Task DocumentGet_ShouldReturnDocument()
+    public async Task Test_DocumentGet_ShouldReturnDocument()
     {
         // Arrange
         var client = _factory.CreateClient();
@@ -30,7 +30,7 @@ public class IntegrationDocumentGetTests : IClassFixture<WebApplicationFactory<P
     }
 
     [Fact]
-    public async Task DocumentPost_ShouldReturnCreated()
+    public async Task Test_DocumentPost_ShouldReturnCreated()
     {
         // Arrange
         var client = _factory.CreateClient();
@@ -54,7 +54,7 @@ public class IntegrationDocumentGetTests : IClassFixture<WebApplicationFactory<P
     }
 
     [Fact]
-    public async Task DocumentPut_ShouldReturnOk()
+    public async Task Test_DocumentPut_ShouldReturnOk()
     {
         // Arrange
         var client = _factory.CreateClient();
