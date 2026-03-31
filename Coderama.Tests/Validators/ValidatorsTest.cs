@@ -5,53 +5,40 @@ using Api.Validators;
 
 public class ValidatorsTest {
 
+    public static TheoryData<IEnumerable<string>> EmptyTags => [
+        [],
+        ["", string.Empty],
+        [" ", "     "]
+    ];
+
+    [Theory]
+    [MemberData(nameof(EmptyTags))]
+    public async Task Test_DocumentPostRequestvalidator_NoTags_Success(IEnumerable<string> tags)
+    {
+        // Arrange
+        var request = new DocumentPostRequest(
+            Guid.NewGuid().ToString(),
+            tags,
+            JsonDocument.Parse("""{"test":"value"}""")
+        );
+
+        var sut = new DocumentPostRequestValidator();
+
+        // Act
+        var result = await sut.ValidateAsync(request);
+
+        // Assert
+        result.ShouldNotBeNull();
+        result.IsValid.ShouldBeTrue();
+    }
+
     [Fact]
     public async Task Test_DocumentPostRequestvalidator_AllData_Success()
     {
         // Arrange
         var request = new DocumentPostRequest(
-            Guid.NewGuid().ToString(),
-            ["tag1", "tag2"],
-            JsonDocument.Parse("""{"test":"value"}""")
-        );
-
-        var sut = new DocumentPostRequestValidator();
-
-        // Act
-        var result = await sut.ValidateAsync(request);
-
-        // Assert
-        result.ShouldNotBeNull();
-        result.IsValid.ShouldBeTrue();
-    }
-
-    [Fact]
-    public async Task Test_DocumentPostRequestvalidator_NoTags_Success()
-    {
-        // Arrange
-        var request = new DocumentPostRequest(
-            Guid.NewGuid().ToString(),
-            [],
-            JsonDocument.Parse("""{"test":"value"}""")
-        );
-
-        var sut = new DocumentPostRequestValidator();
-
-        // Act
-        var result = await sut.ValidateAsync(request);
-
-        // Assert
-        result.ShouldNotBeNull();
-        result.IsValid.ShouldBeTrue();
-    }
-
-    [Fact]
-    public async Task Test_DocumentPostRequestvalidator_EmptyTags_Success()
-    {
-        // Arrange
-        var request = new DocumentPostRequest(
         Guid.NewGuid().ToString(),
-        ["", string.Empty],
+        ["tag1", "tag2"],
         JsonDocument.Parse("""{"test":"value"}""")
         );
 
