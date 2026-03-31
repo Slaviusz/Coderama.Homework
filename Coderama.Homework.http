@@ -1,11 +1,47 @@
-@Coderama.Homework_HostAddress = http://localhost:5284
-
-GET {{Coderama.Homework_HostAddress}}/todos/
+GET http://localhost:5284/documents/some-unique-identifier1
 Accept: application/json
 
 ###
 
-GET {{Coderama.Homework_HostAddress}}/todos/1
+POST http://localhost:5284/documents
 Accept: application/json
+Content-Type: application/json
+
+{
+    "id": "some-unique-identifier1",
+    "tags": ["important", ".net"],
+    "data": {
+        "some": "data",
+        "optional": "fields"
+    }
+}
 
 ###
+
+POST http://localhost:5284/documents
+Accept: application/json
+Content-Type: application/json
+
+{
+  "id": "",
+  "tags": ["important", ".net"],
+  "data": {
+    "some": "data",
+    "optional": "fields"
+  }
+}
+
+###
+
+PUT http://localhost:5284/documents/972137c6-98c2-4b9a-a137-c698c24b9a0c
+Accept: application/json
+Content-Type: application/json
+
+{
+  "id": "some-unique-identifier1",
+  "tags": ["important", ".net"],
+  "data": {
+    "some": "data",
+    "optional": "fields"
+  }
+}
