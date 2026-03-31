@@ -12,6 +12,7 @@ public class DocumentRepository(IDocumentStorage documentStorage) : IDocumentRep
     public async Task<IResult> GetAllDocumentsAsync(CancellationToken cancellationToken) => throw new NotImplementedException();
 
     public async Task<IResult> SearchDocumentByIdAsync(string internalId, CancellationToken cancellationToken) => throw new NotImplementedException();
+
     public async Task<IResult> GetDocumentByIdAsync(string internalId, CancellationToken cancellationToken)
     {
         var getResult = await documentStorage.GetDocumentByIdAsync(internalId, cancellationToken);
