@@ -1,7 +1,6 @@
 namespace Coderama.Api.Endpoints.Documents;
 
 using Abstractions.Contracts.Responses;
-using Abstractions.Interfaces;
 using Mappers;
 using System.Diagnostics.CodeAnalysis;
 

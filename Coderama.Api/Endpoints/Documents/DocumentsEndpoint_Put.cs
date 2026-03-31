@@ -2,7 +2,6 @@ namespace Coderama.Api.Endpoints.Documents;
 
 using Abstractions.Contracts.Requests;
 using Abstractions.Contracts.Responses;
-using Abstractions.Interfaces;
 using DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 

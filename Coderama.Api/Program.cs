@@ -1,4 +1,3 @@
-using Coderama.Abstractions.Interfaces;
 using Coderama.Api.DependencyInjection;
 using Coderama.Api.Implementations.DocumentStorage;
 using Scalar.AspNetCore;

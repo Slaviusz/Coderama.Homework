@@ -1,6 +1,5 @@
 namespace Coderama.Api.Implementations.DocumentStorage;
 
-using Abstractions.Interfaces;
 using Abstractions.Models;
 
 internal class FileStorage : IDocumentStorage {
