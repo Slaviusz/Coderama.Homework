@@ -1,4 +1,4 @@
-namespace Coderama.Api.Validators;
+namespace Coderama.Api.DependencyInjection;
 
 internal class ValidationFilter<T> : IEndpointFilter where T : class
 {
