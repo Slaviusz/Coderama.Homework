@@ -1,6 +1,7 @@
 using Coderama.Api.DependencyInjection;
 using Coderama.Api.Implementations.DocumentRepository;
 using Coderama.Api.Implementations.DocumentStorage;
+using Coderama.Api.Implementations.TransactionRepository;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,9 @@ builder.Services.AddHealthChecks();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddAuthorization();
+
+// Idempotency layer
+builder.Services.AddSingleton<ITransactionRepository, TransactionRepository>();
 
 builder.Services.AddSingleton<IDocumentRepository, DocumentRepository>();
 

@@ -22,7 +22,7 @@ file class DocumentsEndpoint {
             ) => {
                 logger.LogInformation($"Processing PUT Request");
 
-                return await documentRepository.UpdateDocumentAsync(internalId, request.Data, cancellationToken);
+                return await documentRepository.UpdateDocumentAsync(internalId, request, cancellationToken);
             })
             .AddEndpointFilter<ValidationFilter<DocumentPutRequest>>()
             .WithName("UpdateDocumentById")

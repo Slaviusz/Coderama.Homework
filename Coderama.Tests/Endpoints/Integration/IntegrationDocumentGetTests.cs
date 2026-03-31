@@ -35,7 +35,7 @@ public class IntegrationDocumentGetTests : IClassFixture<WebApplicationFactory<P
         // Arrange
         var client = _factory.CreateClient();
         var payload = new {
-            id = "some-unique-identifier1",
+            id = Guid.NewGuid().ToString(),
             tags = (string[])["important", ".net"],
             data = new {
                 some = "data",
@@ -59,7 +59,7 @@ public class IntegrationDocumentGetTests : IClassFixture<WebApplicationFactory<P
         // Arrange
         var client = _factory.CreateClient();
         var payload = new {
-            id = "some-unique-identifier1",
+            id = Guid.NewGuid().ToString(),
             tags = (string[])["important", ".net"],
             data = new {
                 some = "data",

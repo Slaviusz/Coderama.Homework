@@ -4,10 +4,11 @@ using Abstractions.Contracts.Requests;
 using Abstractions.Contracts.Responses;
 using Mappers;
 using System.Diagnostics.CodeAnalysis;
+using TransactionRepository;
 
 [SuppressMessage("ReSharper", "UnusedType.Global")]
-public class DocumentRepository(IDocumentStorage documentStorage) : IDocumentRepository {
-
+[SuppressMessage("ReSharper", "AsyncMethodWithoutAwait")]
+public class DocumentRepository(IDocumentStorage documentStorage, ITransactionRepository transactions) : IDocumentRepository {
 
     public async Task<IResult> GetAllDocumentsAsync(CancellationToken cancellationToken) => throw new NotImplementedException();
 
@@ -30,38 +31,70 @@ public class DocumentRepository(IDocumentStorage documentStorage) : IDocumentRep
 
     public async Task<IResult> StoreDocumentAsync(DocumentPostRequest request, CancellationToken cancellationToken)
     {
+        var transaction = await transactions.GetTransaction(request.Id, cancellationToken);
+
+        if (transaction is not null) { return transaction; }
+
         var storeResult = await documentStorage.StoreDocumentAsync(request.Id, request.Data, cancellationToken);
 
-        return storeResult.Match<IResult>(
-            created => TypedResults.CreatedAtRoute(
-            routeName: "GetDocumentById",
-            routeValues: new { internalId = created.Value },
-            value: new DocumentPostCreatedResponse { InternalId = created.Value }
-        ),
-        error => TypedResults.Problem(
-            detail: error.Value,
-            statusCode: StatusCodes.Status500InternalServerError)
+        return await storeResult.Match<Task<IResult>>(
+            async created => {
+                var result = TypedResults.CreatedAtRoute(
+                    routeName: "GetDocumentById",
+                    routeValues: new
+                    {
+                        internalId = created.Value
+                    },
+                    value: new DocumentPostCreatedResponse
+                    {
+                        InternalId = created.Value
+                    }
+                );
+
+                await transactions.SaveTransaction(request.Id, result, cancellationToken);
+
+                return result;
+            },
+            async error => TypedResults.Problem(
+                detail: error.Value,
+                statusCode: StatusCodes.Status500InternalServerError
+            )
         );
     }
 
-    public async Task<IResult> UpdateDocumentAsync(string internalId, JsonDocument content, CancellationToken cancellationToken)
+    public async Task<IResult> UpdateDocumentAsync(string internalId, DocumentPutRequest request, CancellationToken cancellationToken)
     {
+        var transaction = await transactions.GetTransaction(request.Id, cancellationToken);
+
+        if (transaction is not null) { return transaction; }
+
         var getResult = await documentStorage.GetDocumentByIdAsync(internalId, cancellationToken);
 
         return await getResult.Match<Task<IResult>>(
             async document => {
-                var updateResult = await documentStorage.UpdateDocumentAsync(document.Value.InternalId, content, cancellationToken);
+                var updateResult = await documentStorage.UpdateDocumentAsync(internalId, request.Data, cancellationToken);
 
-                return updateResult.Match<IResult>(
-                    success => TypedResults.Ok(),
-                    error => TypedResults.Problem(
+                return await updateResult.Match<Task<IResult>>(
+                    async success => {
+                        var result = TypedResults.Ok();
+
+                        await transactions.SaveTransaction(request.Id, result, cancellationToken);
+
+                        return result;
+                    },
+                    async error => TypedResults.Problem(
                         detail: error.Value,
                         statusCode: StatusCodes.Status500InternalServerError
                     )
                 );
             },
-            async notfound => TypedResults.NotFound()
-        );
+            async notfound => {
+                var result =  TypedResults.NotFound();
+
+                await transactions.SaveTransaction(internalId, result, cancellationToken);
+
+                return result;
+            });
     }
 
     public async Task<IResult> DeleteDocumentAsync(string internalId, CancellationToken cancellationToken) => throw new NotImplementedException();

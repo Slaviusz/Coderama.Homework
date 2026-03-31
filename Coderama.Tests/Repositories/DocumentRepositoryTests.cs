@@ -4,6 +4,7 @@ using Abstractions.Contracts.Requests;
 using Abstractions.Interfaces;
 using Abstractions.Models;
 using Api.Implementations.DocumentRepository;
+using Microsoft.AspNetCore.Http;
 using NSubstitute;
 using OneOf.Types;
 
@@ -14,7 +15,7 @@ public class DocumentRepositoryTests {
     {
         // Arrange
         var documentStorage = Substitute.For<IDocumentStorage>();
-        var document = GetFakeDocument();
+        var document = Helpers.GetFakeDocument();
 
         documentStorage
             .GetDocumentByIdAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
@@ -24,11 +25,15 @@ public class DocumentRepositoryTests {
             .UpdateDocumentAsync(Arg.Any<string>(), Arg.Any<JsonDocument>(), Arg.Any<CancellationToken>())
             .Returns(new Success());
 
+        var transactionRepository = Substitute.For<ITransactionRepository>();
+        transactionRepository.GetTransaction(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns((IResult?)null);
 
-        var sut = new DocumentRepository(documentStorage);
+        var request = new DocumentPutRequest(Guid.NewGuid().ToString(), document.Tags, document.Data);
+
+        var sut = new DocumentRepository(documentStorage, transactionRepository);
 
         // Act
-        var result = sut.UpdateDocumentAsync(document.InternalId, document.Data, CancellationToken.None);
+        var result = sut.UpdateDocumentAsync(document.InternalId, request, CancellationToken.None);
 
         // Assert
         await result.ShouldNotThrowAsync();
@@ -45,11 +50,14 @@ public class DocumentRepositoryTests {
         var documentStorage = Substitute.For<IDocumentStorage>();
         documentStorage
             .GetDocumentByIdAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
-            .Returns(new Success<InternalDocument>(GetFakeDocument()));
+            .Returns(new Success<InternalDocument>(Helpers.GetFakeDocument()));
 
         var internalId = Guid.NewGuid().ToString();
 
-        var sut = new DocumentRepository(documentStorage);
+        var transactionRepository = Substitute.For<ITransactionRepository>();
+        transactionRepository.GetTransaction(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns((IResult?)null);
+
+        var sut = new DocumentRepository(documentStorage, transactionRepository);
 
         // Act
         var result = sut.GetDocumentByIdAsync(internalId, CancellationToken.None);
@@ -69,10 +77,13 @@ public class DocumentRepositoryTests {
             .StoreDocumentAsync(Arg.Any<string>(), Arg.Any<JsonDocument>(), Arg.Any<CancellationToken>())
             .Returns(new Success<string>(string.Empty));
 
-        var document = GetFakeDocument();
+        var document = Helpers.GetFakeDocument();
         var documentPostRequest = new DocumentPostRequest(document.InternalId, document.Tags, document.Data);
 
-        var sut = new DocumentRepository(documentStorage);
+        var transactionRepository = Substitute.For<ITransactionRepository>();
+        transactionRepository.GetTransaction(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns((IResult?)null);
+
+        var sut = new DocumentRepository(documentStorage, transactionRepository);
 
         // Act
         var result = sut.StoreDocumentAsync(documentPostRequest, CancellationToken.None);
@@ -88,7 +99,11 @@ public class DocumentRepositoryTests {
     {
         // Arrange
         var documentStorage = Substitute.For<IDocumentStorage>();
-        var sut = new DocumentRepository(documentStorage);
+
+        var transactionRepository = Substitute.For<ITransactionRepository>();
+        transactionRepository.GetTransaction(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns((IResult?)null);
+
+        var sut = new DocumentRepository(documentStorage, transactionRepository);
 
         // Act
         var result = sut.GetAllDocumentsAsync(CancellationToken.None);
@@ -102,7 +117,11 @@ public class DocumentRepositoryTests {
     {
         // Arrange
         var documentStorage = Substitute.For<IDocumentStorage>();
-        var sut = new DocumentRepository(documentStorage);
+
+        var transactionRepository = Substitute.For<ITransactionRepository>();
+        transactionRepository.GetTransaction(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns((IResult?)null);
+
+        var sut = new DocumentRepository(documentStorage, transactionRepository);
 
         // Act
         var result = sut.SearchDocumentByIdAsync("", CancellationToken.None);
@@ -116,29 +135,16 @@ public class DocumentRepositoryTests {
     {
         // Arrange
         var documentStorage = Substitute.For<IDocumentStorage>();
-        var sut = new DocumentRepository(documentStorage);
+
+        var transactionRepository = Substitute.For<ITransactionRepository>();
+        transactionRepository.GetTransaction(Arg.Any<string>(), Arg.Any<CancellationToken>()).Returns((IResult?)null);
+
+        var sut = new DocumentRepository(documentStorage, transactionRepository);
 
         // Act
         var result = sut.DeleteDocumentAsync("", CancellationToken.None);
 
         // Assert
         await result.ShouldThrowAsync<NotImplementedException>();
-    }
-
-    private static readonly string[] AttrNames = ["name", "path", "user", "comment", "source", "type"];
-    private static readonly char[] Charset = "abcdefghijklmnopqrstuvwxyz0123456789".ToCharArray();
-    private InternalDocument GetFakeDocument()
-    {
-        return new InternalDocument(
-            Guid.NewGuid().ToString("D"),
-            [],
-            JsonDocument.Parse(
-            $$"""
-              {
-                "{{AttrNames[Random.Shared.Next(AttrNames.Length)]}}": "{{new(Random.Shared.GetItems(Charset, 8))}}",
-                "{{AttrNames[Random.Shared.Next(AttrNames.Length)]}}": "{{new(Random.Shared.GetItems(Charset, 8))}}"
-              }
-              """)
-        );
     }
 }
