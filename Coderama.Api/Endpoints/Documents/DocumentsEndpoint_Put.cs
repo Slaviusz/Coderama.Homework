@@ -17,27 +17,12 @@ file class DocumentsEndpoint {
                 string internalId,
                 DocumentPutRequest request,
                 ILogger<DocumentsEndpoint> logger,
-                IDocumentStorage documentStorage,
+                IDocumentRepository documentRepository,
                 CancellationToken cancellationToken
             ) => {
                 logger.LogInformation($"Processing PUT Request");
 
-                var getResult = await documentStorage.GetDocumentByIdAsync(internalId, cancellationToken);
-
-                return await getResult.Match<Task<IResult>>(
-                    async document => {
-                        var updateResult = await documentStorage.UpdateDocumentAsync(document.Value.InternalId, request.Data, cancellationToken);
-
-                        return updateResult.Match<IResult>(
-                            success => TypedResults.Ok(),
-                            error => TypedResults.Problem(
-                                detail: error.Value,
-                                statusCode: StatusCodes.Status500InternalServerError
-                            )
-                        );
-                    },
-                    async notfound => TypedResults.NotFound()
-                );
+                return await documentRepository.UpdateDocumentAsync(internalId, request.Data, cancellationToken);
             })
             .AddEndpointFilter<ValidationFilter<DocumentPutRequest>>()
             .WithName("UpdateDocumentById")

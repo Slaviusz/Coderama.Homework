@@ -15,23 +15,12 @@ file class DocumentsEndpoint {
             async (
                 DocumentPostRequest request,
                 ILogger<DocumentsEndpoint> logger,
-                IDocumentStorage documentStorage,
+                IDocumentRepository documentRepository,
                 CancellationToken cancellationToken
             ) => {
                 logger.LogInformation($"Processing POST Request");
 
-                var storeResult = await documentStorage.StoreDocumentAsync(request.Id, request.Data, cancellationToken);
-
-                return storeResult.Match<IResult>(
-                    created => TypedResults.CreatedAtRoute(
-                        routeName: "GetDocumentById",
-                        routeValues: new { internalId = created.Value },
-                        value: new DocumentPostCreatedResponse { InternalId = created.Value }
-                    ),
-                    error => TypedResults.Problem(
-                        detail: error.Value,
-                        statusCode: StatusCodes.Status500InternalServerError)
-                    );
+                return await documentRepository.StoreDocumentAsync(request, cancellationToken);
             })
             .AddEndpointFilter<ValidationFilter<DocumentPostRequest>>()
             .WithName("AddDocument")

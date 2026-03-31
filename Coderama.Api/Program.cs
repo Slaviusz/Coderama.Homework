@@ -1,4 +1,5 @@
 using Coderama.Api.DependencyInjection;
+using Coderama.Api.Implementations.DocumentRepository;
 using Coderama.Api.Implementations.DocumentStorage;
 using Scalar.AspNetCore;
 
@@ -11,6 +12,8 @@ builder.Services.AddHealthChecks();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddAuthorization();
+
+builder.Services.AddSingleton<IDocumentRepository, DocumentRepository>();
 
 builder.Services.AddSingleton<IDocumentStorage, FileStorage>();
 

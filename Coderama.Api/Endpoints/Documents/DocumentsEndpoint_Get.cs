@@ -1,7 +1,6 @@
 namespace Coderama.Api.Endpoints.Documents;
 
 using Abstractions.Contracts.Responses;
-using Mappers;
 using System.Diagnostics.CodeAnalysis;
 
 [SuppressMessage("ReSharper", "UnusedParameter.Local")]
@@ -15,21 +14,12 @@ file class DocumentsEndpoint {
             async (
                 string internalId,
                 ILogger<DocumentsEndpoint> logger,
-                IDocumentStorage documentStorage,
-                [FromServices] DocumentGetByIdMapper mapper,
+                IDocumentRepository documentRepository,
                 CancellationToken cancellationToken
             ) => {
                 logger.LogInformation($"Processing POST Request (internalId: {internalId})");
 
-                var getResult = await documentStorage.GetDocumentByIdAsync(internalId, cancellationToken);
-
-                return getResult.Match<IResult>(
-                    success => {
-                        var result = mapper.MapToResponse(success.Value);
-                        return TypedResults.Ok(result);
-                    },
-                    notfound => TypedResults.NotFound()
-                );
+                return await documentRepository.GetDocumentByIdAsync(internalId, cancellationToken);
             })
             .WithName("GetDocumentById")
             .WithTags("Documents")
