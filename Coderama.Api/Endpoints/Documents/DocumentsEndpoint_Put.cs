@@ -4,8 +4,11 @@ using Abstractions.Contracts.Requests;
 using Abstractions.Contracts.Responses;
 using Abstractions.Interfaces;
 using DependencyInjection;
-using Validators;
+using System.Diagnostics.CodeAnalysis;
 
+[SuppressMessage("ReSharper", "UnusedParameter.Local")]
+[SuppressMessage("ReSharper", "UnusedMember.Local")]
+[SuppressMessage("ReSharper", "UnusedType.Local")]
 file class DocumentsEndpoint {
     public static void Put(IEndpointRouteBuilder app)
     {
