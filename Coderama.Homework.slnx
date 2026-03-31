@@ -10,4 +10,5 @@
   </Folder>
   <Project Path="Coderama.Abstractions/Coderama.Abstractions.csproj" />
   <Project Path="Coderama.Api/Coderama.Api.csproj" />
+  <Project Path="Coderama.Tests/Coderama.Tests.csproj" />
 </Solution>
