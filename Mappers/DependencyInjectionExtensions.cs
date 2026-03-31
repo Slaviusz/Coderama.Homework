@@ -1,6 +1,6 @@
 namespace Coderama.Homework.Mappers;
 
-public static class DependencyInjectionExtensions {
+internal static class DependencyInjectionExtensions {
     public static IServiceCollection AddMappers(this IServiceCollection services)
     {
         var mapperTypes = typeof(Program).Assembly.GetTypes()

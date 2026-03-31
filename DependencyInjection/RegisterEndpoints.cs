@@ -3,7 +3,7 @@ namespace Coderama.Homework.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
-public static class RegisterEndpointsExtensions {
+internal static class RegisterEndpointsExtensions {
     [RequiresUnreferencedCode("Dynamic REST API Endpoint registration")]
     public static void RegisterEndpoints(this IEndpointRouteBuilder app, ILogger logger)
     {
