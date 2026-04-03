@@ -25,6 +25,8 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 builder.Services.AddMappers();
 
+builder.Services.AddFusionCache();
+
 var app = builder.Build();
 
 var logger = app.Services.GetRequiredService<ILogger<Program>>();

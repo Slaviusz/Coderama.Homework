@@ -5,7 +5,7 @@ internal class ValidationFilter<T> : IEndpointFilter where T : class
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
         var validator = context.HttpContext.RequestServices.GetService<IValidator<T>>();
-        var entity = Enumerable.OfType<T>(context.Arguments).FirstOrDefault();
+        var entity = context.Arguments.OfType<T>().FirstOrDefault();
 
         if (validator is not null && entity is not null)
         {

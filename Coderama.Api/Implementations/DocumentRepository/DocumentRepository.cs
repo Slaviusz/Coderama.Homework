@@ -4,7 +4,6 @@ using Abstractions.Contracts.Requests;
 using Abstractions.Contracts.Responses;
 using Mappers;
 using System.Diagnostics.CodeAnalysis;
-using TransactionRepository;
 
 [SuppressMessage("ReSharper", "UnusedType.Global")]
 [SuppressMessage("ReSharper", "AsyncMethodWithoutAwait")]

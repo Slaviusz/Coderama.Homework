@@ -1,6 +1,9 @@
 namespace Coderama.Tests.DocumentStorage;
 
+using Abstractions.Models;
 using Api.Implementations.DocumentStorage;
+using NSubstitute;
+using ZiggyCreatures.Caching.Fusion;
 
 public class FileStorageTests {
 
@@ -9,8 +12,9 @@ public class FileStorageTests {
     {
         // Arrange
         (string Id, JsonDocument Document) request = (Guid.NewGuid().ToString(), JsonDocument.Parse("{}"));
+        var cache = Substitute.For<IFusionCache>();
 
-        var sut = new FileStorage();
+        var sut = new FileStorage(cache);
 
         // Act
         var result = await sut.StoreDocumentAsync(request.Id, request.Document, CancellationToken.None);
@@ -24,12 +28,12 @@ public class FileStorageTests {
     public async Task Test_FileStorage_CanGet_Success()
     {
         // Arrange
-        var Id = Guid.NewGuid().ToString();
-
-        var sut = new FileStorage();
+        var id = Guid.NewGuid().ToString();
+        var cache = new FusionCache(new FusionCacheOptions());
+        var sut = new FileStorage(cache);
 
         // Act
-        var result = await sut.GetDocumentByIdAsync(Id, CancellationToken.None);
+        var result = await sut.GetDocumentByIdAsync(id, CancellationToken.None);
 
         // Assert
         result.IsT0.ShouldBeTrue();
@@ -40,8 +44,9 @@ public class FileStorageTests {
     {
         // Arrange
         (string Id, JsonDocument Document) request = (Guid.NewGuid().ToString(), JsonDocument.Parse("{}"));
+        var cache = Substitute.For<IFusionCache>();
 
-        var sut = new FileStorage();
+        var sut = new FileStorage(cache);
 
         // Act
         var result = await sut.UpdateDocumentAsync(request.Id, request.Document, CancellationToken.None);
